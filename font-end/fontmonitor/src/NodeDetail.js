@@ -1,26 +1,36 @@
-import React from 'react';
-import SoundService from '../service/SoundService';
-import soundService from "../service/SoundService";
+import React, { Component } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import axios from 'axios';
 
-class SoundComponent extends React.Component {
+class NodeDetail extends Component {
     constructor(props) {
-        super(props)
+        super(props);
+
         this.state = {
-            sound:[]
-        }
+            sound:[],
+        };
     }
 
     componentDidMount() {
-        soundService.getSound().then((response) => {
-            this.setState({sound:response.data})
-        });
+        this.fetchData();
+    }
+
+    fetchData() {
+        // Make API request to fetch data for the selected area
+        axios.get(`http://localhost:8086/api/sound/${this.state.sound.id}`)
+            .then(response => {
+                this.setState({ data: response.data });
+            })
+            .catch(error => {
+                console.error(error);
+            });
     }
 
     render() {
-        return(
+        return (
             <div>
-                <h1 class= "text-center">Sound List</h1>
-                <table className= "table table-striped">
+                <h1 className="text-center">Details Node + {this.state.sound.id}</h1>
+                <table className="table table-striped">
                     <thead>
                     <tr>
 
@@ -28,7 +38,8 @@ class SoundComponent extends React.Component {
                         <td>Sound decibels</td>
                         <td>Sound area</td>
                         <td>Sound latitude</td>
-                        <td>Sound longitude</td>\
+                        <td>Sound longitude</td>
+                        \
                         <td>Time</td>
                     </tr>
                     </thead>
@@ -49,8 +60,8 @@ class SoundComponent extends React.Component {
                     </tbody>
                 </table>
             </div>
-        )
+        );
     }
 }
 
-export default SoundComponent
+export default NodeDetail
