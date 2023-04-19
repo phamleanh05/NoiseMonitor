@@ -1,7 +1,7 @@
 import React from 'react';
 import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from "react-router-dom";
 const SOUND_REST_API_URL = 'http://localhost:8086/api/sound';
 
 const mapStyles = {
@@ -51,6 +51,11 @@ class MapComponent extends React.Component {
             showingInfoWindow: false
         });
     }
+
+    onMarkerClickRedirect = (sound) => {
+        useNavigate()(`/detail/${sound.id}`);
+    }
+
     render() {
         return (
             <Map google={this.props.google}
@@ -67,18 +72,19 @@ class MapComponent extends React.Component {
                         key={sound.id}
                         position={{ lat: sound.lat, lng: sound.lng }}
                         location={sound}
-                        onClick={this.onMarkerClick}
-                        title={'node ${sound.id}'}
+                        onClick={(props, marker) => this.onMarkerClick(props, marker)}
+                        title={'node '+ sound.id}
+                        onMouseover={(props, marker) => this.onMarkerClick(props, marker)}
+                        onMouseout={this.onClose}
                     />
                 ))}
                 <InfoWindow
                     marker={this.state.activeMarker}
                     visible={!!this.state.activeMarker}
-                    onClose={this.onClose}
-                >
+                    onClose={this.onClose}>
                     <div>
-                        <h2>{this.state.selectedLocation && this.state.selectedLocation.name}</h2>
-                        <p>{this.state.selectedLocation && this.state.selectedLocation.description}</p>
+                        <h4>{this.state.selectedLocation && `node ${this.state.selectedLocation.id}`}</h4>
+                        <button onClick={() => this.onMarkerClickRedirect(this.state.selectedLocation)}>View Details</button>
                     </div>
                 </InfoWindow>
             </Map>
