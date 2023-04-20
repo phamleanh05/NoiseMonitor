@@ -1,23 +1,27 @@
 import React, { Component } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import axios from 'axios';
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
 
-const SOUND_REST_API_URL = 'http://localhost:8086/api/sound';
+const SOUND_REST_API_URL = 'http://localhost:8086/api/sound/';
 
 class NodeDetail extends Component {
-
     constructor(props) {
         super(props);
-
         this.state = {
-            sound:[],
+            sound: []
         };
     }
 
     componentDidMount() {
-        axios.get(`${SOUND_REST_API_URL}/1`)
+        this.fetchData();
+    }
+
+    fetchData() {
+        const nodeId = window.location.pathname.split('/').pop();
+        axios.get(`${SOUND_REST_API_URL}${nodeId}`)
             .then(response => {
-                this.setState({ sound: response.data });
+                this.setState({ sound: [response.data] }); // Set state to an array containing the single object
             })
             .catch(error => {
                 console.error(error);
@@ -25,31 +29,32 @@ class NodeDetail extends Component {
     }
 
     render() {
-        const { sound } = this.state;
 
         return (
             <div>
-                <h1 className="text-center">Details for Sound Node {sound.id}</h1>
+                <h1 className="text-center">Details Node</h1>
                 <table className="table table-striped">
                     <thead>
                     <tr>
-                        <th>Sound ID</th>
-                        <th>Decibels</th>
-                        <th>Area</th>
-                        <th>Latitude</th>
-                        <th>Longitude</th>
-                        <th>Time</th>
+                        <td>Sound id</td>
+                        <td>Sound decibels</td>
+                        <td>Sound area</td>
+                        <td>Sound latitude</td>
+                        <td>Sound longitude</td>
+                        <td>Time</td>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>{sound.id}</td>
-                        <td>{sound.decibels}</td>
-                        <td>{sound.area}</td>
-                        <td>{sound.lat}</td>
-                        <td>{sound.lng}</td>
-                        <td>{sound.time}</td>
-                    </tr>
+                    {this.state.sound.map(sound => (
+                        <tr key={sound.id}>
+                            <td>{sound.id}</td>
+                            <td>{sound.decibels}</td>
+                            <td>{sound.area}</td>
+                            <td>{sound.lat}</td>
+                            <td>{sound.lng}</td>
+                            <td>{sound.time}</td>
+                        </tr>
+                    ))}
                     </tbody>
                 </table>
             </div>

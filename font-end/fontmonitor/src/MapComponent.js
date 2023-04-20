@@ -1,7 +1,6 @@
 import React from 'react';
 import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
 import axios from 'axios';
-import {useNavigate} from "react-router-dom";
 const SOUND_REST_API_URL = 'http://localhost:8086/api/sound';
 
 const mapStyles = {
@@ -52,10 +51,6 @@ class MapComponent extends React.Component {
         });
     }
 
-    onMarkerClickRedirect = (sound) => {
-        useNavigate()(`/detail/${sound.id}`);
-    }
-
     render() {
         return (
             <Map google={this.props.google}
@@ -72,20 +67,14 @@ class MapComponent extends React.Component {
                         key={sound.id}
                         position={{ lat: sound.lat, lng: sound.lng }}
                         location={sound}
-                        onClick={(props, marker) => this.onMarkerClick(props, marker)}
+                        onClick={() => window.location.href=`/detail/${sound.id}`}
                         title={'node '+ sound.id}
-                        onMouseover={(props, marker) => this.onMarkerClick(props, marker)}
-                        onMouseout={this.onClose}
                     />
                 ))}
                 <InfoWindow
                     marker={this.state.activeMarker}
                     visible={!!this.state.activeMarker}
                     onClose={this.onClose}>
-                    <div>
-                        <h4>{this.state.selectedLocation && `node ${this.state.selectedLocation.id}`}</h4>
-                        <button onClick={() => this.onMarkerClickRedirect(this.state.selectedLocation)}>View Details</button>
-                    </div>
                 </InfoWindow>
             </Map>
         );
