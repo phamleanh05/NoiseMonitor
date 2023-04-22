@@ -1,7 +1,9 @@
 import React from 'react';
 import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
 import axios from 'axios';
-const SOUND_REST_API_URL = 'http://localhost:8086/api/sound';
+import {Nav, Navbar, NavDropdown} from "react-bootstrap";
+
+const SOUND_REST_API_URL = 'http://localhost:8086/api/location';
 
 const mapStyles = {
     width: '100%',
@@ -9,15 +11,16 @@ const mapStyles = {
 };
 
 class MapComponent extends React.Component {
-
     constructor(props) {
         super(props);
         this.onMarkerClick = this.onMarkerClick.bind(this);
+        this.toggleMarkers = this.toggleMarkers.bind(this);
         this.state = {
-            sound: [],
+            location: [],
             activeMarker: null,
             selectedLocation: null,
             showingInfoWindow: false,
+            showNullMarkers: true
         };
     }
 
@@ -28,7 +31,7 @@ class MapComponent extends React.Component {
     fetchLocations() {
         axios.get(SOUND_REST_API_URL)
             .then(response => {
-                this.setState({ sound: response.data });
+                this.setState({ location: response.data });
             })
             .catch(error => {
                 console.error(error);
@@ -38,7 +41,7 @@ class MapComponent extends React.Component {
     onMarkerClick = (props, marker) => {
         this.setState({
             activeMarker: marker,
-            selectedLocation: props.sound,
+            selectedLocation: props.location,
             showingInfoWindow: true
         });
     }
@@ -51,38 +54,61 @@ class MapComponent extends React.Component {
         });
     }
 
+    toggleMarkers() {
+        this.setState({ showNullMarkers: !this.state.showNullMarkers });
+    }
+
     render() {
         return (
-            <Map google={this.props.google}
-                 zoom={12}
-                 style={mapStyles}
-                 initialCenter={
-                     {
+            <div>
+                <Navbar  bg="dark" variant="dark" className="justify-content-center">
+                    <Navbar.Brand href="#">NOISE MONITOR</Navbar.Brand>
+                        <Nav className="mr-auto">
+                            <Nav.Link onClick={this.toggleMarkers}>
+                                {this.state.showNullMarkers ? 'ON' : 'OFF'} Old Location
+                            </Nav.Link>
+                        </Nav>
+                </Navbar>
+            <div >
+                <Map google={this.props.google}
+                     zoom={12}
+                     style={mapStyles}
+                     initialCenter={{
                          lat: 10.762622,
                          lng: 106.660172
-                     }
-                 }>
-                {this.state.sound.map(sound => (
-                    <Marker
-                        key={sound.id}
-                        position={{ lat: sound.lat, lng: sound.lng }}
-                        location={sound}
-                        onClick={() => window.location.href=`/detail/${sound.id}`}
-                        title={'node '+ sound.id}
-                    />
-                ))}
-                <InfoWindow
-                    marker={this.state.activeMarker}
-                    visible={!!this.state.activeMarker}
-                    onClose={this.onClose}>
-                </InfoWindow>
-            </Map>
+                     }}>
+                    {this.state.location.map(location => {
+                        if (!this.state.showNullMarkers && !location.soundId) {
+                            return null;
+                        }
+                        const iconUrl = location.soundId
+                            ? 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+                            : 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
+                        return (
+                            <Marker
+                                key={location.locationId}
+                                position={{ lat: location.lat, lng: location.lng }}
+                                location={location}
+                                onClick={() => window.location.href=`/detail/${location.soundId}`}
+                                title={`Node ${location.soundId || '(null)'}`}
+                                icon={iconUrl}
+                            />
+                        );
+                    })}
+                    <InfoWindow
+                        marker={this.state.activeMarker}
+                        visible={!!this.state.activeMarker}
+                        onClose={this.onClose}>
+                    </InfoWindow>
+                </Map>
+            </div>
+            </div>
         );
     }
 }
 
 export default GoogleApiWrapper(
     (props) => ({
-            apiKey: props.apiKey
-        }
-    ))(MapComponent)
+        apiKey: props.apiKey
+    })
+)(MapComponent);

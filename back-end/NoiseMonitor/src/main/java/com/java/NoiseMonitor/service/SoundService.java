@@ -26,7 +26,9 @@ public class SoundService {
     public Optional<Sound> findById(@PathVariable Integer id){
         return soundRepository.findById(id);
     }
-
+    public Optional<Sound> findByLocationId(@PathVariable Integer id){
+        return soundRepository.findByLocationId(id);
+    }
     public void deleteThreshold(@PathVariable Integer id) {
         soundRepository.deleteById(id);
     }

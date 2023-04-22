@@ -25,7 +25,7 @@ public class SoundController {
 
     @GetMapping("{id}")
     ResponseEntity<ResponseObject>findBySoundId(@PathVariable Integer id){
-        Optional<Sound> foundSound = soundService.findById(id);
+        Optional<Sound> foundSound = soundService.findByLocationId(id);
         return foundSound.isPresent() ?
                 ResponseEntity.status(HttpStatus.OK).body(
                         new ResponseObject("ok","Querry Service successfully", foundSound)
@@ -39,7 +39,7 @@ public class SoundController {
     //insert data
     @PostMapping("/insert")
     ResponseEntity<ResponseObject> insertSound(@RequestBody Sound newRate) {
-        Optional<Sound> foundRate = soundService.findById(newRate.getId());
+        Optional<Sound> foundRate = soundService.findById(newRate.getSoundId());
         if (foundRate.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(
                     new ResponseObject("failed", "Insert Rating successfully", " ")
@@ -57,13 +57,13 @@ public class SoundController {
     ResponseEntity<ResponseObject> updateSound(@RequestBody Sound newSound, @PathVariable Integer id){
         Sound updateSound =  soundService.findById(id)
                 .map(sound -> {
-                    sound.setId(newSound.getId());
+                    sound.setSoundId(newSound.getSoundId());
                     sound.setDecibels(newSound.getDecibels());
-                    sound.setArea(newSound.getArea());
+                    sound.setLocationId(newSound.getLocationId());
                     sound.setTime(newSound.getTime());
                     return soundService.saveSound(sound);
                 }).orElseGet(()->{
-                    newSound.setId(id);
+                    newSound.setSoundId(id);
                     return soundService.saveSound(newSound);
                 });
         return ResponseEntity.status(HttpStatus.OK).body(

@@ -3,11 +3,12 @@ package com.java.NoiseMonitor.models;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.Date;
 import java.util.UUID;
+
 @Entity
-@Table(name = "sound")
-public class Sound {
+@Table(name = "location")
+public class Location {
+
     @Id
     @GenericGenerator(name = "UUIDGenerator", strategy = "uuid2")
     @GeneratedValue(generator = "UUIDGenerator")
@@ -16,18 +17,20 @@ public class Sound {
     private UUID uuid;
     private Integer locationId;
     private Integer soundId;
-    private Double Decibels;
-    private Date time;
+    private String area;
+    private Double lat;
+    private Double lng;
 
-    public Sound() {
-    }
-
-    public Sound(UUID uuid, Integer locationId, Integer soundId, Double decibels, Date time) {
+    public Location(UUID uuid, Integer locationId, Integer soundId, String area, Double lat, Double lng) {
         this.uuid = uuid;
         this.locationId = locationId;
         this.soundId = soundId;
-        this.Decibels = decibels;
-        this.time = time;
+        this.area = area;
+        this.lat = lat;
+        this.lng = lng;
+    }
+
+    public Location() {
     }
 
     public UUID getUuid() {
@@ -54,30 +57,39 @@ public class Sound {
         this.soundId = soundId;
     }
 
-    public Double getDecibels() {
-        return Decibels;
+    public String getArea() {
+        return area;
     }
 
-    public void setDecibels(Double decibels) {
-        Decibels = decibels;
+    public void setArea(String area) {
+        this.area = area;
     }
 
-    public Date getTime() {
-        return time;
+    public Double getLat() {
+        return lat;
     }
 
-    public void setTime(Date time) {
-        this.time = time;
+    public void setLat(Double lat) {
+        this.lat = lat;
+    }
+
+    public Double getLng() {
+        return lng;
+    }
+
+    public void setLng(Double lng) {
+        this.lng = lng;
     }
 
     @Override
     public String toString() {
-        return "Sound{" +
+        return "Location{" +
                 "uuid=" + uuid +
                 ", locationId=" + locationId +
                 ", soundId=" + soundId +
-                ", Decibels=" + Decibels +
-                ", time=" + time +
+                ", area='" + area + '\'' +
+                ", lat=" + lat +
+                ", lng=" + lng +
                 '}';
     }
 }
