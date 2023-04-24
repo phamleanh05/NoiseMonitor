@@ -63,45 +63,45 @@ class MapComponent extends React.Component {
             <div>
                 <Navbar  bg="dark" variant="dark" className="justify-content-center">
                     <Navbar.Brand href="#">NOISE MONITOR</Navbar.Brand>
-                        <Nav className="mr-auto">
-                            <Nav.Link onClick={this.toggleMarkers}>
-                                {this.state.showNullMarkers ? 'ON' : 'OFF'} Old Location
-                            </Nav.Link>
-                        </Nav>
+                    <Nav className="mr-auto">
+                        <Nav.Link onClick={this.toggleMarkers}>
+                            {this.state.showNullMarkers ? 'ON' : 'OFF'} Old Location
+                        </Nav.Link>
+                    </Nav>
                 </Navbar>
-            <div >
-                <Map google={this.props.google}
-                     zoom={12}
-                     style={mapStyles}
-                     initialCenter={{
-                         lat: 10.762622,
-                         lng: 106.660172
-                     }}>
-                    {this.state.location.map(location => {
-                        if (!this.state.showNullMarkers && !location.soundId) {
-                            return null;
-                        }
-                        const iconUrl = location.soundId
-                            ? 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
-                            : 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
-                        return (
-                            <Marker
-                                key={location.locationId}
-                                position={{ lat: location.lat, lng: location.lng }}
-                                location={location}
-                                onClick={() => window.location.href=`/detail/${location.soundId}`}
-                                title={`Node ${location.soundId || '(null)'}`}
-                                icon={iconUrl}
-                            />
-                        );
-                    })}
-                    <InfoWindow
-                        marker={this.state.activeMarker}
-                        visible={!!this.state.activeMarker}
-                        onClose={this.onClose}>
-                    </InfoWindow>
-                </Map>
-            </div>
+                <div >
+                    <Map google={this.props.google}
+                         zoom={12}
+                         style={mapStyles}
+                         initialCenter={{
+                             lat: 10.762622,
+                             lng: 106.660172
+                         }}>
+                        {this.state.location.map(location => {
+                            if (!this.state.showNullMarkers && !location.soundId) {
+                                return null;
+                            }
+                            const iconUrl = location.soundId
+                                ? 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+                                : 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
+                            return (
+                                <Marker
+                                    key={location.locationId}
+                                    position={{ lat: location.lat, lng: location.lng }}
+                                    location={location}
+                                    onClick={() => window.location.href=`/detail/${location.soundId}`}
+                                    title={`Node ${location.soundId || '(null)'}`}
+                                    icon={iconUrl}
+                                />
+                            );
+                        })}
+                        <InfoWindow
+                            marker={this.state.activeMarker}
+                            visible={!!this.state.activeMarker}
+                            onClose={this.onClose}>
+                        </InfoWindow>
+                    </Map>
+                </div>
             </div>
         );
     }

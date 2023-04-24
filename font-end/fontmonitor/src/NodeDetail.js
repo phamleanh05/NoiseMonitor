@@ -19,9 +19,11 @@ class NodeDetail extends Component {
 
     fetchData() {
         const nodeId = window.location.pathname.split('/').pop();
-        axios.get(`${SOUND_REST_API_URL}`)
+        axios.get(`${SOUND_REST_API_URL}${nodeId}`)
             .then(response => {
-                this.setState({ sound: response.data }); // Set state to an array containing the single object
+                const soundId = response.data[0].soundId; // Get the locationId of the first item in the array
+                const filteredSound = response.data.filter(sound => sound.soundId === soundId); // Filter the array based on the locationId
+                this.setState({ sound: filteredSound });
             })
             .catch(error => {
                 console.error(error);
@@ -48,40 +50,40 @@ class NodeDetail extends Component {
                         </Nav>
                     </Navbar.Collapse>
                 </Navbar>
-            <div style={{ backgroundColor: 'white', color: 'black', justifyContent: 'center' }}>
-                <h1 className="text-center">Details Node</h1>
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <LineChart width={800} height={400} data={this.state.sound}>
-                        <Line type="monotone" dataKey="decibels" stroke="red" color="black" />
-                        <CartesianGrid/>
-                        <XAxis dataKey="time" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                    </LineChart>
-                </div>
-                <table className="table table-striped">
-                    <thead>
-                    <tr>
-                        <td>Sound id</td>
-                        <td>Sound decibels</td>
-                        <td>Sound Location</td>
-                        <td>Time</td>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {
-                        this.state.sound.map(sound => (
-                        <tr key={sound.soundId}>
-                            <td>{sound.soundId}</td>
-                            <td>{sound.decibels}</td>
-                            <td>{sound.locationId}</td>
-                            <td>{sound.time}</td>
+                <div style={{ backgroundColor: 'white', color: 'black', justifyContent: 'center' }}>
+                    <h1 className="text-center">Details Node</h1>
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                        <LineChart width={800} height={400} data={this.state.sound}>
+                            <Line type="monotone" dataKey="decibels" stroke="red" color="black" />
+                            <CartesianGrid/>
+                            <XAxis dataKey="time" />
+                            <YAxis />
+                            <Tooltip />
+                            <Legend />
+                        </LineChart>
+                    </div>
+                    <table className="table table-striped">
+                        <thead>
+                        <tr>
+                            <td>Sound id</td>
+                            <td>Sound decibels</td>
+                            <td>Sound Location</td>
+                            <td>Time</td>
                         </tr>
-                    ))}
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                        {
+                            this.state.sound.map(sound => (
+                                <tr key={sound.soundId}>
+                                    <td>{sound.soundId}</td>
+                                    <td>{sound.decibels}</td>
+                                    <td>{sound.locationId}</td>
+                                    <td>{sound.time}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         );
     }
